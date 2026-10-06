@@ -1,0 +1,302 @@
+{
+  "name": "coc-zig-next",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Zig support for coc.nvim: toolchain management, the Zig Language Server (zls) and editor integrations.",
+  "author": "wongxy <xiyao.wong@foxmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiyaowong/coc-zig-next"
+  },
+  "keywords": [
+    "coc.nvim",
+    "zig",
+    "zls"
+  ],
+  "main": "lib/index.js",
+  "engines": {
+    "coc": "^0.0.80",
+    "node": ">=22.0.0"
+  },
+  "activationEvents": [
+    "onLanguage:zig",
+    "workspaceContains:build.zig",
+    "workspaceContains:build.zig.zon",
+    "workspaceContains:.zigversion"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "Zig",
+      "properties": {
+        "zig.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the zig executable, or \"zig\" to look it up in PATH. Leave empty to install and manage zig automatically."
+        },
+        "zig.version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "The zig version to install."
+        },
+        "zig.libPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Override the Zig library path. Resolved by the Zig compiler when unset."
+        },
+        "zig.formattingProvider": {
+          "type": "string",
+          "enum": [
+            "off",
+            "extension",
+            "zls"
+          ],
+          "enumItemLabels": [
+            "Off",
+            "Extension",
+            "ZLS language server"
+          ],
+          "default": "zls",
+          "description": "How Zig formatting is provided: `off` disables formatting, `extension` invokes `zig fmt` directly, `zls` delegates to the language server."
+        },
+        "zig.buildOnSaveProvider": {
+          "type": "string",
+          "enum": [
+            "off",
+            "auto",
+            "extension",
+            "zls"
+          ],
+          "enumItemLabels": [
+            "Disabled",
+            "Automatic",
+            "Extension",
+            "ZLS language server"
+          ],
+          "default": "auto",
+          "description": "How build on save diagnostics are provided: `auto` leaves it to the language server, `extension` runs `zig build --watch`, `zls` enables the language server's build on save, `off` disables it."
+        },
+        "zig.buildOnSaveArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional arguments passed to `zig build` when running build on save. Use `--build-file` to override the build file."
+        },
+        "zig.zls.enabled": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "off",
+            "on"
+          ],
+          "default": "ask",
+          "description": "Whether to use the ZLS language server: `ask` prompts once, `off` never starts it, `on` installs and starts it automatically."
+        },
+        "zig.zls.path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Path to the zls executable, or \"zls\" to look it up in PATH. When set, no download happens."
+        },
+        "zig.zls.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Trace the communication between coc and the ZLS language server."
+        },
+        "zig.zls.enableSnippets": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable snippet completions when the client supports them."
+        },
+        "zig.zls.enableArgumentPlaceholders": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable function argument placeholder completions."
+        },
+        "zig.zls.completionLabelDetails": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the function signature in completion results. May improve readability in some editors when disabled."
+        },
+        "zig.zls.semanticTokens": {
+          "type": "string",
+          "enum": [
+            "none",
+            "partial",
+            "full"
+          ],
+          "default": "partial",
+          "description": "Level of semantic tokens. `partial` only includes information that requires semantic analysis and usually gives a better result thanks to the syntax file."
+        },
+        "zig.zls.inlayHintsShowVariableTypeHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inlay hints for variable types."
+        },
+        "zig.zls.inlayHintsShowStructLiteralFieldType": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inlay hints for fields in struct and union literals."
+        },
+        "zig.zls.inlayHintsShowParameterName": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inlay hints for parameter names."
+        },
+        "zig.zls.inlayHintsShowBuiltin": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable inlay hints for builtin functions."
+        },
+        "zig.zls.inlayHintsExcludeSingleArgument": {
+          "type": "boolean",
+          "default": true,
+          "description": "Don't show inlay hints for single argument calls."
+        },
+        "zig.zls.inlayHintsHideRedundantParamNames": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide inlay hints when the parameter name matches the identifier, e.g. `foo: foo`."
+        },
+        "zig.zls.inlayHintsHideRedundantParamNamesLastToken": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide inlay hints when the parameter name matches the last token of a parameter node, e.g. `foo: bar.foo`."
+        },
+        "zig.zls.warnStyle": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable warnings for style guideline mismatches."
+        },
+        "zig.zls.highlightGlobalVarDeclarations": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to highlight global var declarations."
+        },
+        "zig.zls.skipStdReferences": {
+          "type": "boolean",
+          "default": false,
+          "description": "Skip searching for references in the standard library. Improves lookup speed for functions in your code; renaming and go-to-definition keep working."
+        },
+        "zig.zls.preferAstCheckAsChildProcess": {
+          "type": "boolean",
+          "default": true,
+          "description": "Favor using `zig ast-check` instead of the builtin one."
+        },
+        "zig.zls.builtinPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Override the path to the 'builtin' module. Resolved automatically when unset."
+        },
+        "zig.zls.buildRunnerPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specify a custom build runner to resolve build system information."
+        },
+        "zig.zls.globalCachePath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Path to a directory used as zig's cache. Defaults to zls's own cache on the system."
+        },
+        "zig.zls.additionalOptions": {
+          "type": "object",
+          "default": {},
+          "description": "Additional config options forwarded to zls. Every property must have the format 'zig.zls.someOptionName'. There is no warning about unused or ignored options.",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^zig\\.zls\\.[a-z]+[A-Z0-9][a-z0-9]+[A-Za-z0-9]*$": {}
+          }
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "zig.install",
+        "title": "Install / Select Version",
+        "category": "Zig"
+      },
+      {
+        "command": "zig.createProject",
+        "title": "Create Project",
+        "category": "Zig"
+      },
+      {
+        "command": "zig.buildStep",
+        "title": "Run Build Step...",
+        "category": "Zig"
+      },
+      {
+        "command": "zig.toggleMultilineStringLiteral",
+        "title": "Toggle Multiline String Literal",
+        "category": "Zig"
+      },
+      {
+        "command": "zig.insertLineBreakWithoutContinuation",
+        "title": "Insert Line Break Without Continuation",
+        "category": "Zig"
+      },
+      {
+        "command": "zig.zls.enable",
+        "title": "Enable Language Server",
+        "category": "Zig Language Server"
+      },
+      {
+        "command": "zig.zls.startRestart",
+        "title": "Start / Restart Language Server",
+        "category": "Zig Language Server"
+      },
+      {
+        "command": "zig.zls.stop",
+        "title": "Stop Language Server",
+        "category": "Zig Language Server"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "clean": "node -e \"require('node:fs').rmSync('lib', { recursive: true, force: true })\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "tsdown"
+  },
+  "dependencies": {
+    "semver": "^7.5.2",
+    "which": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@types/semver": "^7.5.8",
+    "@types/which": "^3.0.4",
+    "@wongxy/eslint-config": "^4.0.3",
+    "coc.nvim": "^0.0.83-next.27",
+    "eslint": "^10.10.0",
+    "tsdown": "^0.23.0",
+    "typescript": "^5.9.3"
+  }
+}
